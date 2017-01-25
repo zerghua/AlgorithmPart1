@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.StdRandom;
 public class PercolationStats {
     private double[] ret ;
     private int size ;
+    private int T;
 
     private double getThreshold(int n){
         Percolation p = new Percolation(n);
@@ -28,6 +29,7 @@ public class PercolationStats {
         if(n<=0 || trials <=0) throw new IllegalArgumentException("n and trails should >0");
         ret = new double[trials];
         size = n;
+        T = trials;
         for(int i=0;i<trials;i++){
             ret[i] = getThreshold(n);
         }
@@ -43,11 +45,11 @@ public class PercolationStats {
     }
     public double confidenceLo()                  // low  endpoint of 95% confidence interval
     {
-        return mean() - 1.96*stddev() / Math.sqrt(size);
+        return mean() - 1.96*stddev() / Math.sqrt(T);
     }
     public double confidenceHi()                  // high endpoint of 95% confidence interval
     {
-        return mean() + 1.96*stddev() / Math.sqrt(size);
+        return mean() + 1.96*stddev() / Math.sqrt(T);
     }
 
     public static void main(String[] args)        // test client (described below)
