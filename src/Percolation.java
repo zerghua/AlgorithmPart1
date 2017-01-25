@@ -254,7 +254,8 @@ public class Percolation {
 */
 
 
-// two UF objects to fix backwash problem.
+// two UF objects to fix backwash problem. works.
+/*
 public class Percolation {
     private boolean[][] openedSite; //
     private WeightedQuickUnionUF site, siteNoBottom;
@@ -367,3 +368,147 @@ public class Percolation {
     }
 
 }
+
+*/
+
+
+// a better solution: less memory.  one UF object with status of isConnectedToTop and isConnectedToBottom
+// each open, check isConnectedToTop[index] && isConnectedToBottom[index];
+// the key is that isConnectedToTop and isConnectedToBottom maintains the status of each groups' root.
+/*
+
+ASSESSMENT SUMMARY
+Compilation: PASSED
+API: PASSED
+Findbugs: PASSED
+Checkstyle: FAILED (109 warnings)
+Correctness: 26/26 tests passed
+Memory: 9/8 tests passed
+Timing: 9/9 tests passed
+Aggregate score: 101.25% [Compilation: 5%, API: 5%, Findbugs: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
+
+*/
+public class Percolation {
+    private boolean[] isOpened, isConnectedToTop, isConnectedToBottom;
+    private WeightedQuickUnionUF uf;
+    private int numberOfOpenSites, size;
+    private boolean isPercolate;
+
+    public Percolation(int n)                // create n-by-n grid, with all sites blocked
+    {
+        if(n<=0) throw new IllegalArgumentException("n is less than 1");
+        size=n;
+        numberOfOpenSites=0;
+        isOpened =new boolean[size*size];
+        isConnectedToTop = new boolean[size*size];
+        isConnectedToBottom = new boolean[size*size];
+        uf = new WeightedQuickUnionUF(size*size);
+        isPercolate = false;
+    }
+
+    public void open(int row, int col)    // open site (row, col) if it is not open already
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        if(isOpened[getSiteIndex(row, col)] == true) return;  //we don't do anything if it's opened already
+
+        int index = getSiteIndex(row, col);
+        isOpened[index] = true;
+        numberOfOpenSites++;
+        boolean top = false, bottom = false;
+
+        // union with neighbours if they are open, and get status
+        if(isValidSite(row-1, col) && isOpen(row-1, col)) { // top
+            int neighbour_index = index - size ;
+            if(isConnectedToTop[uf.find(neighbour_index)]  || isConnectedToTop[uf.find(index)]) top = true;
+            if(isConnectedToBottom[uf.find(neighbour_index)]  || isConnectedToBottom[uf.find(index)]) bottom = true;
+            uf.union(index, neighbour_index);
+        }
+        if(isValidSite(row+1, col) && isOpen(row+1, col)) { // bottom
+            int neighbour_index = index + size ;
+            if(isConnectedToTop[uf.find(neighbour_index)]  || isConnectedToTop[uf.find(index)]) top = true;
+            if(isConnectedToBottom[uf.find(neighbour_index)]  || isConnectedToBottom[uf.find(index)]) bottom = true;
+            uf.union(index, neighbour_index);
+        }
+        if(isValidSite(row, col+1) && isOpen(row, col+1)) { // right
+            int neighbour_index = index + 1 ;
+            if(isConnectedToTop[uf.find(neighbour_index)]  || isConnectedToTop[uf.find(index)]) top = true;
+            if(isConnectedToBottom[uf.find(neighbour_index)]  || isConnectedToBottom[uf.find(index)]) bottom = true;
+            uf.union(index, neighbour_index);
+        }
+        if(isValidSite(row, col-1) && isOpen(row, col-1)) { // left
+            int neighbour_index = index - 1 ;
+            if(isConnectedToTop[uf.find(neighbour_index)]  || isConnectedToTop[uf.find(index)]) top = true;
+            if(isConnectedToBottom[uf.find(neighbour_index)]  || isConnectedToBottom[uf.find(index)]) bottom = true;
+            uf.union(index, neighbour_index);
+        }
+
+        if(row == 1) top = true;
+        if(row == size) bottom = true;
+
+        // update status
+        isConnectedToTop[uf.find(index)] = top;
+        isConnectedToBottom[uf.find(index)] = bottom;
+
+        if(top && bottom) isPercolate = true;
+    }
+
+    public boolean isOpen(int row, int col)  // is site (row, col) open?
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        return isOpened[getSiteIndex(row, col)];
+    }
+
+    public boolean isFull(int row, int col)  // is site (row, col) full?
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        return isConnectedToTop[uf.find(getSiteIndex(row, col))];
+    }
+
+    public int numberOfOpenSites()       // number of open sites
+    {
+        return numberOfOpenSites;
+    }
+
+    public boolean percolates()              // does the system percolate?
+    {
+        return isPercolate;
+    }
+
+    private double getThreshold(){
+        int n = size, total = n*n;
+        int[] blockedSites= new int[total];
+        for(int i=0;i<total;i++) blockedSites[i] = i;
+        StdRandom.shuffle(blockedSites);
+
+        for(int i=0;i<total;i++) {
+            int row = 1 + blockedSites[i] / n, col = 1 + blockedSites[i] % n;
+            open(row, col);
+            if(i>=n && percolates()){
+                return numberOfOpenSites*1.0/total;
+            }
+        }
+        return 0; //should never reach here
+    }
+
+    private boolean isValidSite(int row, int col){
+        if(row <1 || row >size|| col <1 || col >size) return false;
+        return true;
+    }
+
+    // index of cell is between [0, n*n-1]
+    private int getSiteIndex(int row, int col){
+        return size * (row - 1) + col - 1;
+    }
+
+
+    public static void main(String[] args)   // test client (optional)
+    {
+        int n=200;
+        Stopwatch time = new Stopwatch();
+        Percolation p = new Percolation(n);
+        System.out.println(p.getThreshold());
+        System.out.println(String.format("%-25s= ","Time") + time.elapsedTime());
+    }
+
+}
+
