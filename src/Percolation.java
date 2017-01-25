@@ -138,9 +138,23 @@ public class Percolation {
  */
 
 
-// smart implementation,
+// smart implementation
 // use sentinel variable top/bottom for faster check. this is effectively like have a list of elements.
 // running from above 1s to 0.038s for n=200
+// however this solution has a bug named backwash, which means once top and bottom are connected,
+// open another bottom row cell which is not full will cause isFull() give false full result.
+// to solve this bug, use two UF objects, an extra one doesn't union last row when opened which used to check isFull().
+/*
+ASSESSMENT SUMMARY
+Compilation: PASSED
+API: PASSED
+Findbugs: PASSED
+Checkstyle: FAILED (92 warnings)
+Correctness: 22/26 tests passed
+Memory: 8/8 tests passed
+Timing: 9/9 tests passed
+Aggregate score: 90.77% [Compilation: 5%, API: 5%, Findbugs: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
+
 public class Percolation {
     private boolean[][] openedSite; //
     private WeightedQuickUnionUF site;
@@ -188,6 +202,122 @@ public class Percolation {
     {
         if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
         return site.connected(getSiteIndex(row, col), top);
+    }
+
+    public int numberOfOpenSites()       // number of open sites
+    {
+        return numberOfOpenSites;
+    }
+
+    public boolean percolates()              // does the system percolate?
+    {
+        return site.connected(top, bottom);
+    }
+
+    private double getThreshold(){
+        int n = size, total = n*n;
+        int[] blockedSites= new int[total];
+        for(int i=0;i<total;i++) blockedSites[i] = i;
+        StdRandom.shuffle(blockedSites);
+
+        for(int i=0;i<total;i++) {
+            int row = 1 + blockedSites[i] / n, col = 1 + blockedSites[i] % n;
+            open(row, col);
+            if(i>=n && percolates()){
+                return numberOfOpenSites*1.0/total;
+            }
+        }
+        return 0; //should never reach here
+    }
+
+    private boolean isValidSite(int row, int col){
+        if(row <1 || row >size|| col <1 || col >size) return false;
+        return true;
+    }
+
+    // index of cell is between [1, n*n], 0 and n*n + 1 are reserved as sentinels.
+    private int getSiteIndex(int row, int col){
+        return size * (row - 1) + col;
+    }
+
+
+    public static void main(String[] args)   // test client (optional)
+    {
+        int n=200;
+        Stopwatch time = new Stopwatch();
+        Percolation p = new Percolation(n);
+        System.out.println(p.getThreshold());
+        System.out.println(String.format("%-25s= ","Time") + time.elapsedTime());
+    }
+
+}
+*/
+
+
+// two UF objects to fix backwash problem.
+public class Percolation {
+    private boolean[][] openedSite; //
+    private WeightedQuickUnionUF site, siteNoBottom;
+    private int numberOfOpenSites, size, top, bottom;
+
+    public Percolation(int n)                // create n-by-n grid, with all sites blocked
+    {
+        if(n<=0) throw new IllegalArgumentException("n is less than 1");
+        size=n;
+        numberOfOpenSites=0;
+        openedSite = new boolean[size+1][size+1];
+        site = new WeightedQuickUnionUF(size*size+2);
+        siteNoBottom = new WeightedQuickUnionUF(size*size+1);
+        top = 0;
+        bottom = size*size+1;
+    }
+
+    public void open(int row, int col)    // open site (row, col) if it is not open already
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        if(openedSite[row][col] == true) return;  //we don't do anything if it's opened already
+
+        int index = getSiteIndex(row, col);
+        openedSite[row][col] = true;
+        numberOfOpenSites++;
+
+        // key to faster implementation
+        if(row == 1) {
+            site.union(top, getSiteIndex(row, col));
+            siteNoBottom.union(top, getSiteIndex(row, col));
+        }
+        if(row == size) site.union(bottom, getSiteIndex(row, col));
+
+        // union with neighbours if they are open
+        if(isValidSite(row-1, col) && isOpen(row-1, col)) {
+            site.union(index, getSiteIndex(row-1, col));
+            siteNoBottom.union(index, getSiteIndex(row-1, col));
+        }
+        if(isValidSite(row+1, col) && isOpen(row+1, col)) {
+            site.union(index, getSiteIndex(row+1, col));
+            siteNoBottom.union(index, getSiteIndex(row+1, col));
+        }
+        if(isValidSite(row, col+1) && isOpen(row, col+1)) {
+            site.union(index, getSiteIndex(row, col+1));
+            siteNoBottom.union(index, getSiteIndex(row, col+1));
+        }
+        if(isValidSite(row, col-1) && isOpen(row, col-1)) {
+            site.union(index, getSiteIndex(row, col-1));
+            siteNoBottom.union(index, getSiteIndex(row, col-1));
+        }
+
+    }
+
+    public boolean isOpen(int row, int col)  // is site (row, col) open?
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        return openedSite[row][col];
+    }
+
+    public boolean isFull(int row, int col)  // is site (row, col) full?
+    {
+        if(!isValidSite(row, col)) throw new IndexOutOfBoundsException("row or col is out of bound, row="+row + " col="+col);
+        return siteNoBottom.connected(getSiteIndex(row, col), top);
     }
 
     public int numberOfOpenSites()       // number of open sites
