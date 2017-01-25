@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class PercolationStats {
     private double[] ret ;
-    private int size ;
     private int T;
 
     private double getThreshold(int n){
@@ -28,7 +27,6 @@ public class PercolationStats {
     {
         if(n<=0 || trials <=0) throw new IllegalArgumentException("n and trails should >0");
         ret = new double[trials];
-        size = n;
         T = trials;
         for(int i=0;i<trials;i++){
             ret[i] = getThreshold(n);
