@@ -1,5 +1,3 @@
-package Assignment1_Percolation;
-
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.algs4.Stopwatch;
@@ -9,20 +7,20 @@ import edu.princeton.cs.algs4.Stopwatch;
 naive implementation, check each openedLastRow with each openedFirstRow for percolation, will incur o(n^2) for such check
 
 
- > java Assignment1_Percolation.PercolationStats 200 10
+ > java PercolationStats 200 10
  mean                     = 0.5961874999999999
  stddev                   = 0.011335987740623034
  95% confidence interval  = 0.5946164122546428, 0.597758587745357
  Time                     = 8.246
 
- > java Assignment1_Percolation.PercolationStats 200 20
+ > java PercolationStats 200 20
 mean                     = 0.593105
 stddev                   = 0.009043118930988348
 95% confidence interval  = 0.5918516876590411, 0.5943583123409589
 Time                     = 15.674
 
 faster implementation(100x faster)
- > java Assignment1_Percolation.PercolationStats 200 20
+ > java PercolationStats 200 20
 mean                     = 0.59133375
 stddev                   = 0.0072390855912448406
 95% confidence interval  = 0.5903304639238128, 0.5923370360761872
@@ -35,7 +33,7 @@ Time                     = 0.09
 12 13 14 15
 
 
-public class Assignment1_Percolation.Percolation {
+public class Percolation {
     private boolean[] openedSite;
     private WeightedQuickUnionUF site;
     private int numberOfOpenSites=0;
@@ -50,7 +48,7 @@ public class Assignment1_Percolation.Percolation {
         return size * (row - 1) + col -1;
     }
 
-    public Assignment1_Percolation.Percolation(int n)                // create n-by-n grid, with all sites blocked
+    public Percolation(int n)                // create n-by-n grid, with all sites blocked
     {
         if(n<=0) throw new IllegalArgumentException("n is less than 1");
         size=n;
@@ -130,7 +128,7 @@ public class Assignment1_Percolation.Percolation {
     {
         int n=200;
         Stopwatch time = new Stopwatch();
-        Assignment1_Percolation.Percolation p = new Assignment1_Percolation.Percolation(n);
+        Percolation p = new Percolation(n);
         System.out.println(p.getThreshold());
         System.out.println(String.format("%-25s= ","Time") + time.elapsedTime());
     }
@@ -157,12 +155,12 @@ Memory: 8/8 tests passed
 Timing: 9/9 tests passed
 Aggregate score: 90.77% [Compilation: 5%, API: 5%, Findbugs: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
 
-public class Assignment1_Percolation.Percolation {
+public class Percolation {
     private boolean[][] openedSite; //
     private WeightedQuickUnionUF site;
     private int numberOfOpenSites, size, top, bottom;
 
-    public Assignment1_Percolation.Percolation(int n)                // create n-by-n grid, with all sites blocked
+    public Percolation(int n)                // create n-by-n grid, with all sites blocked
     {
         if(n<=0) throw new IllegalArgumentException("n is less than 1");
         size=n;
@@ -247,7 +245,7 @@ public class Assignment1_Percolation.Percolation {
     {
         int n=200;
         Stopwatch time = new Stopwatch();
-        Assignment1_Percolation.Percolation p = new Assignment1_Percolation.Percolation(n);
+        Percolation p = new Percolation(n);
         System.out.println(p.getThreshold());
         System.out.println(String.format("%-25s= ","Time") + time.elapsedTime());
     }
@@ -258,12 +256,12 @@ public class Assignment1_Percolation.Percolation {
 
 // two UF objects to fix backwash problem. works.
 /*
-public class Assignment1_Percolation.Percolation {
+public class Percolation {
     private boolean[][] openedSite; //
     private WeightedQuickUnionUF site, siteNoBottom;
     private int numberOfOpenSites, size, top, bottom;
 
-    public Assignment1_Percolation.Percolation(int n)                // create n-by-n grid, with all sites blocked
+    public Percolation(int n)                // create n-by-n grid, with all sites blocked
     {
         if(n<=0) throw new IllegalArgumentException("n is less than 1");
         size=n;
@@ -364,7 +362,7 @@ public class Assignment1_Percolation.Percolation {
     {
         int n=200;
         Stopwatch time = new Stopwatch();
-        Assignment1_Percolation.Percolation p = new Assignment1_Percolation.Percolation(n);
+        Percolation p = new Percolation(n);
         System.out.println(p.getThreshold());
         System.out.println(String.format("%-25s= ","Time") + time.elapsedTime());
     }

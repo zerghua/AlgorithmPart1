@@ -1,5 +1,3 @@
-package Assignment1_Percolation;
-
 import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.Stopwatch;
 import edu.princeton.cs.algs4.StdRandom;
@@ -55,7 +53,7 @@ public class PercolationStats {
     public static void main(String[] args)        // test client (described below)
     {
         if(args.length != 2) {
-            throw new IllegalArgumentException("usage: java Assignment1_Percolation.PercolationStats 20 10 ");
+            throw new IllegalArgumentException("usage: java PercolationStats 20 10 ");
         }
 
         Stopwatch time = new Stopwatch();
