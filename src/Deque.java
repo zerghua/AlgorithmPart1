@@ -101,7 +101,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the front
     public Item removeFirst(){
-        if(isEmpty()) throw new java.util.NoSuchElementException("Error when removing a item from an empty deque");
+        if(isEmpty()) throw new java.util.NoSuchElementException("Error when removing the first item from an empty deque");
         Item ret = first.item;
         first = first.next;
         if(n == 1) last = first;
@@ -112,7 +112,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // remove and return the item from the end
     public Item removeLast(){
-        if(isEmpty()) throw new java.util.NoSuchElementException("Error when removing a item from an empty deque");
+        if(isEmpty()) throw new java.util.NoSuchElementException("Error when removing the last item from an empty deque");
         Item ret = last.item;
         last = last.prev;
         if(n == 1) first = last;
@@ -149,26 +149,44 @@ public class Deque<Item> implements Iterable<Item> {
         Deque<String> d = new Deque<>();
         String[] s = in.split(" ");
         for(String token: s){
-            if(token.charAt(0) == '+'){
-                String e = token.substring(2);
-                if(token.charAt(1) == 'F') d.addFirst(e);
-                else d.addLast(e);
-            }else{
-                if(token.charAt(1) == 'F') d.removeFirst();
-                else d.removeLast();
+            try {
+                if (token.charAt(0) == '+') {
+                    String e = token.substring(2);
+                    if (token.charAt(1) == 'F') {
+                        if(e.equals("null"))d.addFirst(null);
+                        else d.addFirst(e);
+                    }
+                    else {
+                        if(e.equals("null"))d.addLast(null);
+                        d.addLast(e);
+                    }
+                } else {
+                    if (token.charAt(1) == 'F') d.removeFirst();
+                    else d.removeLast();
+                }
+                if (d.isEmpty()) System.out.print("deque is empty");
+                else for (String e : d) System.out.print(e + " ");
+                System.out.println();
+            }catch (Exception exp){
+                System.out.println(exp.toString());
             }
-            if(d.isEmpty()) System.out.print("deque is empty");
-            else for (String e : d) System.out.print(e + " ");
-            System.out.println();
         }
-
     }
+
 
     private void runUnitTest(){
         unitTest("+F10 +L20 +F30 +L40 -F -F -L -L");
         unitTest("+F10 -L");
         unitTest("+F10 +F20 +F30 +L40 +L50");
         unitTest("+F10 -L +F20 -F +F30 -L +L40 -F +L50 +F60");
+
+        // below should throw exceptions
+        unitTest("-L");
+        unitTest("-F");
+        unitTest("+F10 -L -L");
+        unitTest("+Fnull");
+        unitTest("+Lnull");
+
     }
 
     // unit testing (optional)
