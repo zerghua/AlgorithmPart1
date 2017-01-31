@@ -1,7 +1,7 @@
-/******************************************************************************
- *  Compilation:  javac PercolationVisualizer.java
- *  Execution:    java PercolationVisualizer input.txt
- *  Dependencies: Percolation.java
+package Assignment1_Percolation; /******************************************************************************
+ *  Compilation:  javac Assignment1_Percolation.PercolationVisualizer.java
+ *  Execution:    java Assignment1_Percolation.PercolationVisualizer input.txt
+ *  Dependencies: Assignment1_Percolation.Percolation.java
  *
  *  This program takes the name of a file as a command-line argument.
  *  From that file, it
