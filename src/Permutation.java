@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 /**
  * Created by Hua on 1/31/2017.
@@ -37,6 +38,8 @@ import edu.princeton.cs.algs4.StdOut;
 
 
 public class Permutation {
+    // n memory
+    /*
     public static void main(String[] args){
         int k = Integer.valueOf(args[0]);
         RandomizedQueue<String> q = new RandomizedQueue<>();
@@ -44,6 +47,25 @@ public class Permutation {
             q.enqueue(StdIn.readString());
         }
         for(int i=0;i<k;i++) StdOut.println(q.dequeue());
+    }
+    */
+
+    // k memory, Reservoir sampling
+    public static void main(String[] args){
+        int k = Integer.valueOf(args[0]);
+        int count = 0;
+        String[] q = new String[k];
+        while(StdIn.hasNextLine() && !StdIn.isEmpty()) {
+            String input = StdIn.readString();
+            if(count < k){
+                q[count] = input;
+            }else{
+                int index = StdRandom.uniform(count);
+                if(index < k) q[index] = input;
+            }
+            count++;
+        }
+        for(String e: q) StdOut.println(e);
     }
 
 }
