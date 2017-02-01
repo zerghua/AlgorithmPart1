@@ -162,7 +162,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.println("\ntest Iterator exception");
         RandomizedQueue<String> q = new RandomizedQueue<>();
         q.enqueue("20");
-        Iterator iter = q.iterator();
+        Iterator<String> iter = q.iterator();
         try{
             System.out.println(iter.next());
             System.out.println(iter.next());
@@ -185,6 +185,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // unit testing (optional)
     public static void main(String[] args){
-        new RandomizedQueue().runUnitTest();
+        new RandomizedQueue<>().runUnitTest();
     }
 }

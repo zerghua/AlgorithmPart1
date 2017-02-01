@@ -191,7 +191,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (optional)
     public static void main(String[] args){
-        new Deque().runUnitTest();
+        new Deque<>().runUnitTest();
     }
 }
 
