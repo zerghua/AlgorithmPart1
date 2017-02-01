@@ -95,7 +95,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         Item ret = a[index];
         a[index] = a[--n];
         a[n] = null;     // to avoid loitering
-        if(n>=0 && n == a.length/4) resize(a.length/2);
+        if(n>0 && n == a.length/4) resize(a.length/2);
         return ret;
     }
 
@@ -179,6 +179,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         unitTest("10 - =");
         unitTest("null");
         unitTestIterator();
+        unitTest("325 - 464 - 117");
 
     }
 
