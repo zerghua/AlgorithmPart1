@@ -50,20 +50,20 @@ public class Permutation {
     }
     */
 
-    // k memory, Reservoir sampling
+    // K memory, modified Reservoir sampling, not quite sure why the probability is 1/n
     public static void main(String[] args){
         int k = Integer.valueOf(args[0]);
-        int count = 0;
-        String[] q = new String[k];
-        while(StdIn.hasNextLine() && !StdIn.isEmpty()) {
+        RandomizedQueue<String> q = new RandomizedQueue<>();
+        if(k==0) return;
+
+        for (int count = 1; !StdIn.isEmpty(); count++) { //has to be 1 rather than 0.
             String input = StdIn.readString();
-            if(count < k){
-                q[count] = input;
-            }else{
-                int index = StdRandom.uniform(count);
-                if(index < k) q[index] = input;
+            if (count <= k) {
+                q.enqueue(input);
+            } else if (Math.random() < (double) k / count) {
+                q.dequeue();
+                q.enqueue(input);
             }
-            count++;
         }
         for(String e: q) StdOut.println(e);
     }
