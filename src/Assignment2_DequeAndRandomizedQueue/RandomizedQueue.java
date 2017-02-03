@@ -1,3 +1,5 @@
+package Assignment2_DequeAndRandomizedQueue;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -8,10 +10,10 @@ import edu.princeton.cs.algs4.StdRandom;
 
  Randomized queue.
  A randomized queue is similar to a stack or queue, except that the item removed is chosen uniformly at random
- from items in the data structure. Create a generic data type RandomizedQueue that implements the following API:
+ from items in the data structure. Create a generic data type Assignment2_DequeAndRandomizedQueue.RandomizedQueue that implements the following API:
 
- public class RandomizedQueue<Item> implements Iterable<Item> {
-     public RandomizedQueue()                 // construct an empty randomized queue
+ public class Assignment2_DequeAndRandomizedQueue.RandomizedQueue<Item> implements Iterable<Item> {
+     public Assignment2_DequeAndRandomizedQueue.RandomizedQueue()                 // construct an empty randomized queue
      public boolean isEmpty()                 // is the queue empty?
      public int size()                        // return the number of items on the queue
      public void enqueue(Item item)           // add the item

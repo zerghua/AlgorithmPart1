@@ -1,16 +1,27 @@
+package Assignment2_DequeAndRandomizedQueue;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * Created by Hua on 1/31/2017.
 
+ ASSESSMENT SUMMARY Compilation: PASSED (0 errors, 3 warnings)
+ API: PASSED
+ Findbugs: FAILED (4 warnings)
+ Checkstyle: FAILED (122 warnings)
+ Correctness: 43/43 tests passed
+ Memory: 54/53 tests passed
+ Timing: 110/110 tests passed
+ Aggregate score: 100.19% [Compilation: 5%, API: 5%, Findbugs: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
+
 
  Dequeue. A double-ended queue or deque (pronounced "deck") is a generalization of a stack and a queue that supports
- adding and removing items from either the front or the back of the data structure. Create a generic data type Deque
+ adding and removing items from either the front or the back of the data structure. Create a generic data type Assignment2_DequeAndRandomizedQueue.Deque
  that implements the following API:
 
- public class Deque<Item> implements Iterable<Item> {
-     public Deque()                           // construct an empty deque
+ public class Assignment2_DequeAndRandomizedQueue.Deque<Item> implements Iterable<Item> {
+     public Assignment2_DequeAndRandomizedQueue.Deque()                           // construct an empty deque
      public boolean isEmpty()                 // is the deque empty?
      public int size()                        // return the number of items on the deque
      public void addFirst(Item item)          // add the item to the front
