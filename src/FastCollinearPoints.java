@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -56,26 +57,18 @@ import java.util.Arrays;
 
  */
 public class FastCollinearPoints {
-    private int numOfSegments=0;
-    private Point[] sortedPoints;
-    private Point[] start;
-    private Point[] end;
-    private Point[] in;
+    private ArrayList<LineSegment> ret;
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points){
         if(points == null || points.length==0) throw new NullPointerException("null is not allowed as input");
-        int n = points.length;
-        sortedPoints = new Point[n];
-        start = new Point[n*n];
-        end = new Point[n*n];
-        in = new Point[n];
+        Point[] in = points.clone();
+        int n = in.length;
+        ret = new ArrayList<>();
 
-        // check null and copy. o(n)
+        // check null. o(n)
         for(int i=0;i<n;i++) {
-            if(points[i] == null) throw new NullPointerException("null item found in input");
-            sortedPoints[i] = points[i];
-            in[i] = points[i];
+            if(in[i] == null) throw new NullPointerException("null item found in input");
         }
 
         // check repeat elements   o(nlogn)
@@ -84,8 +77,31 @@ public class FastCollinearPoints {
             if(in[i].compareTo(in[i-1]) == 0) {
                 throw new IllegalArgumentException("Repeated point is not allowed");
             }
-            //System.out.println(in[i]);
         }
+
+        for (int i=0; i<n; i++) {
+            Arrays.sort(in);   //important
+            Point a = in[i];
+            Arrays.sort(in, a.slopeOrder());  //important
+
+            //System.out.println("\n\n Point a="+a);
+            //printPoint(sortedPoints);
+
+            // need to find at least 3 points with the same slope after a in sortedPoints
+            // concise code
+            for (int first = 1, last = 2; last < n; last++) {
+                while (last < n && a.slopeTo(in[first]) == a.slopeTo(in[last])) last++;
+
+                // smart way to make sure only on add line segment starting from this point
+                // but the order must be sorted first or this way won't work
+                if (last - first >= 3 && a.compareTo(in[first]) < 0) {
+                    ret.add(new LineSegment(a, in[last-1]));
+                }
+
+                first = last;
+            }
+        }
+
     }
 
     private void printPoint(Point[] a){
@@ -94,76 +110,17 @@ public class FastCollinearPoints {
     }
 
 
-    private boolean isDup(Point a, Point b){
-        for(int i=0;i<numberOfSegments();i++){
-            if(start[i].compareTo(a) == 0 && end[i].compareTo(b) == 0) return true;
-        }
-        return false;
-    }
-
     // the number of line segments
     public int numberOfSegments(){
-        return numOfSegments;
+        return ret.size();
     }
 
     // the line segments
+    // mutate Point[]
+    // mutate LineSegment[]
+    // segments() should be immutable, multiple call should return the same result of the same input
     public LineSegment[] segments(){
-        int n = in.length;
-        if(n<4) return new LineSegment[0];
-        for(int i=0;i<n;i++){
-            Point a = in[i];
-            Arrays.sort(sortedPoints, a.slopeOrder());
-            //System.out.println("\n\n Point a="+a);
-            //printPoint(sortedPoints);
-
-            // need to find at least 3 points with the same slope after a in sortedPoints
-            double slope = a.slopeTo(sortedPoints[1]);
-            int count = 1;
-            for(int j=2;j<n;j++){
-                Point newPoint = sortedPoints[j];
-                double newSlope = a.slopeTo(newPoint);
-                if(slope == newSlope) count++;
-                else {
-                    if(count >= 3) {
-                        Arrays.sort(sortedPoints, j-count, j);
-                        Point left = sortedPoints[j - count];
-                        Point right =  sortedPoints[j - 1];
-                        if(a.compareTo(left) < 0) left = a;
-                        if(a.compareTo(right) > 0) right = a;
-
-                        if(!isDup(left, right)) {
-                            //System.out.println("j="+j+" count="+count+" numOfSegments="+numOfSegments);
-                            start[numOfSegments] = left;
-                            end[numOfSegments] = right;
-                            numOfSegments++;
-                        }
-                    }
-                    slope = newSlope;
-                    count = 1;
-                }
-            }
-            if(count >= 3) {
-                Arrays.sort(sortedPoints, n-count, n);
-                Point left = sortedPoints[n - count];
-                Point right =  sortedPoints[n - 1];
-                if(a.compareTo(left) < 0) left = a;
-                if(a.compareTo(right) > 0) right = a;
-
-                if(!isDup(left, right)) {
-                    start[numOfSegments] = left;
-                    end[numOfSegments] = right;
-                    numOfSegments++;
-                }
-            }
-        }
-
-
-        // construct line segment
-        LineSegment[] ret = new LineSegment[numOfSegments];
-        for(int i=0;i<numOfSegments;i++){
-            ret[i] = new LineSegment(start[i], end[i]);
-        }
-        return ret;
+        return ret.toArray(new LineSegment[ret.size()]);
     }
 
     public static void main(String[] args) {
@@ -194,5 +151,7 @@ public class FastCollinearPoints {
             segment.draw();
         }
         StdDraw.show();
+
+
     }
 }
