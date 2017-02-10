@@ -67,9 +67,9 @@ public class BruteCollinearPoints {
                     }
                     if(isFound) break;
                 }
-                if(isFound) break;
+                isFound = false;
             }
-            isFound = false;
+
         }
     }
 
