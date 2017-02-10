@@ -50,24 +50,25 @@ import java.util.Arrays;
  input6.txt
  input8.txt
  rs1423.txt
+ input40.txt
+ horizontal5.txt
 
- input40.txt   //TODO needs to be passed, parallel line segment
 
  */
 public class FastCollinearPoints {
     private int numOfSegments=0;
     private Point[] sortedPoints;
-    private LineSegment[] seg;
-    private double[] slopes;
+    private Point[] start;
+    private Point[] end;
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points){
         if(points == null || points.length==0) throw new NullPointerException("null is not allowed as input");
         int n = points.length;
         if(n<4) return;
-        seg = new LineSegment[n];
         sortedPoints = new Point[n];
-        slopes = new double[n];
+        start = new Point[n];
+        end = new Point[n];
 
         // sanity check 1
         for(int i=0;i<n;i++) {
@@ -103,21 +104,36 @@ public class FastCollinearPoints {
                 double newSlope = a.slopeTo(newPoint);
                 if(slope == newSlope) count++;
                 else {
-                    if(count >= 3 && !isSubSegment(slope)) {//isSubSegment should be fixed to handle parallel
+                    if(count >= 3) {//isSubSegment should be fixed to handle parallel
                         Arrays.sort(sortedPoints, j-count, j);
-                        seg[numOfSegments] = new LineSegment(a,sortedPoints[j-1]);
-                        slopes[numOfSegments] = slope;
-                        numOfSegments++;
+                        Point left = sortedPoints[j - count];
+                        Point right =  sortedPoints[j - 1];
+                        if(a.compareTo(left) < 0) left = a;
+                        if(a.compareTo(right) > 0) right = a;
+
+                        if(!isDup(left, right)) {
+                            //System.out.println("j="+j+" count="+count+" numOfSegments="+numOfSegments);
+                            start[numOfSegments] = left;
+                            end[numOfSegments] = right;
+                            numOfSegments++;
+                        }
                     }
                     slope = newSlope;
                     count = 1;
                 }
             }
-            if(count >= 3 && !isSubSegment(slope)) {
+            if(count >= 3) {
                 Arrays.sort(sortedPoints, n-count, n);
-                seg[numOfSegments] = new LineSegment(a, sortedPoints[n - 1]);
-                slopes[numOfSegments] = slope;
-                numOfSegments++;
+                Point left = sortedPoints[n - count];
+                Point right =  sortedPoints[n - 1];
+                if(a.compareTo(left) < 0) left = a;
+                if(a.compareTo(right) > 0) right = a;
+
+                if(!isDup(left, right)) {
+                    start[numOfSegments] = left;
+                    end[numOfSegments] = right;
+                    numOfSegments++;
+                }
             }
         }
     }
@@ -127,9 +143,10 @@ public class FastCollinearPoints {
         System.out.println();
     }
 
-    private boolean isSubSegment(double slope){
+
+    private boolean isDup(Point a, Point b){
         for(int i=0;i<numberOfSegments();i++){
-            if(slopes[i] == slope) return true;
+            if(start[i].compareTo(a) == 0 && end[i].compareTo(b) == 0) return true;
         }
         return false;
     }
@@ -143,7 +160,7 @@ public class FastCollinearPoints {
     public LineSegment[] segments(){
         LineSegment[] ret = new LineSegment[numOfSegments];
         for(int i=0;i<numOfSegments;i++){
-            ret[i] = seg[i];
+            ret[i] = new LineSegment(start[i], end[i]);
         }
         return ret;
     }
