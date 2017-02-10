@@ -51,6 +51,8 @@ import java.util.Arrays;
  input8.txt
  rs1423.txt
 
+ input40.txt   //TODO needs to be passed, parallel line segment
+
  */
 public class FastCollinearPoints {
     private int numOfSegments=0;
@@ -62,6 +64,7 @@ public class FastCollinearPoints {
     public FastCollinearPoints(Point[] points){
         if(points == null || points.length==0) throw new NullPointerException("null is not allowed as input");
         int n = points.length;
+        if(n<4) return;
         seg = new LineSegment[n];
         sortedPoints = new Point[n];
         slopes = new double[n];
@@ -100,7 +103,8 @@ public class FastCollinearPoints {
                 double newSlope = a.slopeTo(newPoint);
                 if(slope == newSlope) count++;
                 else {
-                    if(count >= 3 && !isSubSegment(slope)) {
+                    if(count >= 3 && !isSubSegment(slope)) {//isSubSegment should be fixed to handle parallel
+                        Arrays.sort(sortedPoints, j-count, j);
                         seg[numOfSegments] = new LineSegment(a,sortedPoints[j-1]);
                         slopes[numOfSegments] = slope;
                         numOfSegments++;
@@ -110,6 +114,7 @@ public class FastCollinearPoints {
                 }
             }
             if(count >= 3 && !isSubSegment(slope)) {
+                Arrays.sort(sortedPoints, n-count, n);
                 seg[numOfSegments] = new LineSegment(a, sortedPoints[n - 1]);
                 slopes[numOfSegments] = slope;
                 numOfSegments++;
