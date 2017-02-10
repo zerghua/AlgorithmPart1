@@ -67,8 +67,8 @@ public class FastCollinearPoints {
         if(points == null || points.length==0) throw new NullPointerException("null is not allowed as input");
         int n = points.length;
         sortedPoints = new Point[n];
-        start = new Point[n];
-        end = new Point[n];
+        start = new Point[n*n];
+        end = new Point[n*n];
         in = new Point[n];
 
         // check null and copy. o(n)
@@ -124,7 +124,7 @@ public class FastCollinearPoints {
                 double newSlope = a.slopeTo(newPoint);
                 if(slope == newSlope) count++;
                 else {
-                    if(count >= 3) {//isSubSegment should be fixed to handle parallel
+                    if(count >= 3) {
                         Arrays.sort(sortedPoints, j-count, j);
                         Point left = sortedPoints[j - count];
                         Point right =  sortedPoints[j - 1];
