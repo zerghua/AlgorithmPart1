@@ -60,41 +60,61 @@ public class FastCollinearPoints {
     private Point[] sortedPoints;
     private Point[] start;
     private Point[] end;
+    private Point[] in;
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points){
         if(points == null || points.length==0) throw new NullPointerException("null is not allowed as input");
         int n = points.length;
-        if(n<4) return;
         sortedPoints = new Point[n];
         start = new Point[n];
         end = new Point[n];
+        in = new Point[n];
 
-        // sanity check 1
+        // check null and copy. o(n)
         for(int i=0;i<n;i++) {
             if(points[i] == null) throw new NullPointerException("null item found in input");
+            sortedPoints[i] = points[i];
+            in[i] = points[i];
         }
 
-        Arrays.sort(points);
-
-        // sanity check 2
-        //System.out.println(points[0]);
-        sortedPoints[0] = points[0];
+        // check repeat elements   o(nlogn)
+        Arrays.sort(in);
         for(int i=1;i<n;i++){
-            if(points[i].compareTo(points[i-1]) == 0) {
+            if(in[i].compareTo(in[i-1]) == 0) {
                 throw new IllegalArgumentException("Repeated point is not allowed");
             }
-            sortedPoints[i] = points[i];
-            //System.out.println(points[i]);
+            //System.out.println(in[i]);
         }
+    }
+
+    private void printPoint(Point[] a){
+        for(int i=0;i<a.length;i++)System.out.print(a[i] + ":" + a[0].slopeTo(a[i]) + "  ");
+        System.out.println();
+    }
 
 
+    private boolean isDup(Point a, Point b){
+        for(int i=0;i<numberOfSegments();i++){
+            if(start[i].compareTo(a) == 0 && end[i].compareTo(b) == 0) return true;
+        }
+        return false;
+    }
+
+    // the number of line segments
+    public int numberOfSegments(){
+        return numOfSegments;
+    }
+
+    // the line segments
+    public LineSegment[] segments(){
+        int n = in.length;
+        if(n<4) return new LineSegment[0];
         for(int i=0;i<n;i++){
-            Point a = points[i];
+            Point a = in[i];
             Arrays.sort(sortedPoints, a.slopeOrder());
             //System.out.println("\n\n Point a="+a);
             //printPoint(sortedPoints);
-
 
             // need to find at least 3 points with the same slope after a in sortedPoints
             double slope = a.slopeTo(sortedPoints[1]);
@@ -136,28 +156,9 @@ public class FastCollinearPoints {
                 }
             }
         }
-    }
-
-    private void printPoint(Point[] a){
-        for(int i=0;i<a.length;i++)System.out.print(a[i] + ":" + a[0].slopeTo(a[i]) + "  ");
-        System.out.println();
-    }
 
 
-    private boolean isDup(Point a, Point b){
-        for(int i=0;i<numberOfSegments();i++){
-            if(start[i].compareTo(a) == 0 && end[i].compareTo(b) == 0) return true;
-        }
-        return false;
-    }
-
-    // the number of line segments
-    public int numberOfSegments(){
-        return numOfSegments;
-    }
-
-    // the line segments
-    public LineSegment[] segments(){
+        // construct line segment
         LineSegment[] ret = new LineSegment[numOfSegments];
         for(int i=0;i<numOfSegments;i++){
             ret[i] = new LineSegment(start[i], end[i]);
