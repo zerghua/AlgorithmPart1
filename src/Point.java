@@ -101,7 +101,7 @@ public class Point implements Comparable<Point> {
         public int compare(Point a, Point b){
             double i = Point.this.slopeTo(a);
             double j = Point.this.slopeTo(b);
-            if(i == j) return a.compareTo(b);
+            if(i == j) return 0;
             else if(i<j) return -1;
             return 1;
         }
