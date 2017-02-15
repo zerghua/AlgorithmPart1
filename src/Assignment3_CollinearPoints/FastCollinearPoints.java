@@ -1,3 +1,5 @@
+package Assignment3_CollinearPoints;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -39,7 +41,7 @@ import java.util.Arrays;
  * Performance requirement.
  * The order of growth of the running time of your program should be n2 log n in the worst case
  * and it should use space proportional to n plus the number of line segments returned.
- * FastCollinearPoints should work properly even if the input has 5 or more collinear points.
+ * Assignment3_CollinearPoints.FastCollinearPoints should work properly even if the input has 5 or more collinear points.
  * <p/>
  * <p/>
  * Notes:
@@ -118,8 +120,8 @@ public class FastCollinearPoints {
     }
 
     // the line segments
-    // mutate Point[]
-    // mutate LineSegment[]
+    // mutate Assignment3_CollinearPoints.Point[]
+    // mutate Assignment3_CollinearPoints.LineSegment[]
     // segments() should be immutable, multiple call should return the same result of the same input
     public LineSegment[] segments() {
         return ret.toArray(new LineSegment[ret.size()]);

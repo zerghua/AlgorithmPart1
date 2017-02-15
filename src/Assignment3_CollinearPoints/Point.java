@@ -1,8 +1,8 @@
-/******************************************************************************
+package Assignment3_CollinearPoints; /******************************************************************************
  * Created by HuaZ on 2/9/2017.
  * <p/>
- * Compilation:  javac Point.java
- * Execution:    java Point
+ * Compilation:  javac Assignment3_CollinearPoints.Point.java
+ * Execution:    java Assignment3_CollinearPoints.Point
  * Dependencies: none
  * <p/>
  * An immutable data type for points in the plane.
@@ -10,8 +10,8 @@
  ******************************************************************************/
 
 /******************************************************************************
- *  Compilation:  javac Point.java
- *  Execution:    java Point
+ *  Compilation:  javac Assignment3_CollinearPoints.Point.java
+ *  Execution:    java Assignment3_CollinearPoints.Point
  *  Dependencies: none
  *
  *  An immutable data type for points in the plane.
@@ -127,7 +127,7 @@ public class Point implements Comparable<Point> {
     }
 
     /**
-     * Unit tests the Point data type.
+     * Unit tests the Assignment3_CollinearPoints.Point data type.
      */
     public static void main(String[] args) {
         System.out.println(1.0 * 5 / 2);

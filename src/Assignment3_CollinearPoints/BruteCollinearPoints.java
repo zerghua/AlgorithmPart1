@@ -1,10 +1,12 @@
+package Assignment3_CollinearPoints;
+
 import edu.princeton.cs.algs4.*;
 import edu.princeton.cs.algs4.StdDraw;
 
 /**
  * Created by HuaZ on 2/9/2017.
  * <p/>
- * Brute force. Write a program BruteCollinearPoints.java that examines 4 points at a time and checks whether
+ * Brute force. Write a program Assignment3_CollinearPoints.BruteCollinearPoints.java that examines 4 points at a time and checks whether
  * they all lie on the same line segment, returning all such line segments.
  * To check whether the 4 points p, q, r, and s are collinear, check whether the three slopes between p and q,
  * between p and r, and between p and s are all equal.
@@ -12,7 +14,7 @@ import edu.princeton.cs.algs4.StdDraw;
  * The method segments() should include each line segment containing 4 points exactly once.
  * If 4 points appear on a line segment in the order p→q→r→s, then you should include either
  * the line segment p→s or s→p (but not both) and you should not include subsegments such as p→r or q→r.
- * For simplicity, we will not supply any input to BruteCollinearPoints that has 5 or more collinear points.
+ * For simplicity, we will not supply any input to Assignment3_CollinearPoints.BruteCollinearPoints that has 5 or more collinear points.
  * <p/>
  * Corner cases. Throw a java.lang.NullPointerException either the argument to the constructor is null or
  * if any point in the array is null. Throw a java.lang.IllegalArgumentException if the argument to the
