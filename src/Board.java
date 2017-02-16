@@ -131,6 +131,8 @@ public class Board {
         if (blocks == null) throw new java.lang.NullPointerException("null input is not allowed");
         if (blocks[0].length != blocks.length) throw new IllegalArgumentException("input is not n by n");
         n = blocks.length;
+        goal = new int[n][n];
+        tiles = new int[n][n];
 
         // initialize goal board and copy to tiles
         for(int i=0;i<n;i++){
