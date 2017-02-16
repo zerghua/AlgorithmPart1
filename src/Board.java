@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 /**
  * Created by Hua on 2/15/2017.
 
@@ -121,52 +123,136 @@
 
  */
 public class Board {
+    int[][] tiles, goal;
+    int n;
 
     // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks){
+        if (blocks == null) throw new java.lang.NullPointerException("null input is not allowed");
+        if (blocks[0].length != blocks.length) throw new IllegalArgumentException("input is not n by n");
+        n = blocks.length;
 
-
+        // initialize goal board and copy to tiles
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++) {
+                goal[i][j] = i*n + j + 1;
+                tiles[i][j] = blocks[i][j];
+            }
+        }
+        goal[n-1][n-1] = 0;
     }
 
     // board dimension n
     public int dimension(){
-
-        return 1;
+        return n;
     }
 
     // number of blocks out of place
     public int hamming(){
-        return 1;
+        int ret = 0;
+        for(int i=0;i<n;i++) {
+            for (int j = 0; j < n; j++) {
+                if(i == n-1 && j == n-1) break;  // don't count the last one
+                if(tiles[i][j] != goal[i][j]) ret++;
+            }
+        }
+        return ret;
     }
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan(){
-        return 1;
+        int ret = 0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(tiles[i][j] == 0 || tiles[i][j] == goal[i][j]) continue;
+                int val = tiles[i][j];
+                ret += Math.abs(i - (val-1)/n) + Math.abs(j - (val-1)%n);
+            }
+        }
+        return ret;
     }
 
     // is this board the goal board?
     public boolean isGoal(){
-        return false;
+        return hamming() == 0;
+    }
+
+    private void swap(int[][] m, int i, int j, int new_i, int new_j){
+        int tmp = m[i][j];
+        m[i][j] = m[new_i][new_j];
+        m[new_i][new_j] = tmp;
     }
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin(){
-        return null;
+        Board ret = new Board(tiles);
+        int count = 0, idx_i=0, idx_j=0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(ret.tiles[i][j] == 0) continue;
+                if(count == 0){
+                    idx_i = i;
+                    idx_j = j;
+                    count++;
+                }else if(count == 1){
+                    swap(ret.tiles, i, j, idx_i, idx_j);
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 
     // does this board equal y?
     public boolean equals(Object y){
-        return false;
+        if(y == this) return true;
+        if(y == null) return false;
+        if(y.getClass() != this.getClass()) return false;
+        Board that = (Board) y;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++) if(tiles[i][j] != that.tiles[i][j]) return false;
+        }
+        return true;
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors(){
-        return null;
+        // get blank index
+        int blank_i =0, blank_j = 0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(tiles[i][j] == 0){
+                    blank_i = i;
+                    blank_j = j;
+                    break;
+                }
+            }
+        }
+
+        // add 4 neighbours
+        int[][] dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        Stack<Board> ret = new Stack<>();
+        for(int i=0;i<dir.length;i++){
+            if(blank_i + dir[i][0] >=0 && blank_i + dir[i][0] <n && blank_j + dir[i][1] >=0 && blank_j + dir[i][1] < n){
+                Board b = new Board(tiles);
+                swap(b.tiles, blank_i, blank_j, blank_i + dir[i][0], blank_j + dir[i][1]);
+                ret.add(b);
+            }
+        }
+        return ret;
     }
 
     // string representation of this board (in the output format specified below)
     public String toString(){
-        return null;
+        StringBuilder s = new StringBuilder();
+        s.append(n + "\n");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                s.append(String.format("%2d ", tiles[i][j]));
+            }
+            s.append("\n");
+        }
+        return s.toString();
     }
 
     // unit tests (not graded)
