@@ -123,8 +123,8 @@ import java.util.Stack;
 
  */
 public class Board {
-    int[][] tiles, goal;
-    int n;
+    private int[][] tiles, goal;
+    private int n;
 
     // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks){
