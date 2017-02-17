@@ -26,21 +26,13 @@ import java.util.LinkedList;
 
  */
 public class Solver {
-    /*
-    private class Node{
-        Board board;
-        Node preNode;
-        int moves;
-        Node(Board cur, Node pre, int moves){
-            this.board = cur;
-            this.preNode = pre;
-            this.moves = moves;
-        }
-    }
-    */
+    private boolean isSolvable =false;
+    private int moves = -1;
+    private Node lastNode = null;
+
 
     // additional variable to differentiate from twins
-    private class Node{
+    private class Node implements Comparable<Node>{
         Board board;
         Node preNode;
         int moves;
@@ -51,25 +43,38 @@ public class Solver {
             this.moves = moves;
             this.isTwin = isTwin;
         }
+
+        public int heuristic(){
+            return board.manhattan() + moves;
+        }
+
+        public int compareTo(Node that){
+            if(this.heuristic() == that.heuristic()) return this.board.manhattan() - that.board.manhattan();
+            return this.heuristic() - that.heuristic();
+        }
     }
 
+    // find a solution to the initial board (using the A* algorithm)
+    // using only one queue
+    // see git history of 2 queue version
+    public Solver(Board initial){
+        Board twin = initial.twin();
+        Node a = new Node(initial, null, 0, false);
+        Node b = new Node(twin, null, 0, true);
+        MinPQ<Node> q = new MinPQ<>();
+        q.insert(a);
+        q.insert(b);
 
-    private boolean isSolvable =false;
-    private int moves = -1;
-    private Node lastNode;
-
-
-    private MinPQ<Node> initQueue(Board b){
-        return new MinPQ<>(new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                // break tie by using manhattan
-                if(o1.board.manhattan() + o1.moves == o2.board.manhattan() + o2.moves){
-                    return o1.board.manhattan() - o2.board.manhattan();
-                }
-                return o1.board.manhattan() + o1.moves - o2.board.manhattan() - o2.moves;
+        while(true){
+            Node cur = q.delMin();
+            if(cur.board.isGoal()){
+                if(cur.isTwin == false) isSolvable = true;
+                lastNode = cur;
+                moves = cur.moves;
+                break;
             }
-        });
+            addNeighboursToQueue(cur, q);
+        }
     }
 
     private void addNeighboursToQueue(Node cur, MinPQ<Node> q){
@@ -78,71 +83,6 @@ public class Solver {
 
             Node newNode = new Node(neighbour, cur, cur.moves + 1, cur.isTwin);
             q.insert(newNode);
-        }
-    }
-
-/*
-    // find a solution to the initial board (using the A* algorithm)
-    public Solver(Board initial){
-        Board twin = initial.twin();
-        boolean isRunningInitial = true;
-
-        Node a = new Node(initial, null, 0);
-        MinPQ<Node> q = initQueue(initial);
-        q.insert(a);
-
-        Node b = new Node(twin, null, 0);
-        MinPQ<Node> twin_q = initQueue(twin);
-        twin_q.insert(b);
-
-        while(true){
-            if(isRunningInitial){
-                Node cur = q.delMin();
-                if(cur.board.isGoal()){
-                    isSolvable = true;
-                    lastNode = cur;
-                    moves = cur.moves;
-                    break;
-                }
-                addNeighboursToQueue(cur, q);
-                isRunningInitial = false;
-            }
-            else{
-                Node cur = twin_q.delMin();
-                if(cur.board.isGoal()){
-                    isSolvable = false;
-                    break;
-                }
-                addNeighboursToQueue(cur, twin_q);
-                isRunningInitial = true;
-            }
-        }
-    }
-*/
-
-    // find a solution to the initial board (using the A* algorithm)
-    // using only one queue
-    public Solver(Board initial){
-        Board twin = initial.twin();
-        Node a = new Node(initial, null, 0, false);
-        Node b = new Node(twin, null, 0, true);
-        MinPQ<Node> q = initQueue(initial);
-        q.insert(a);
-        q.insert(b);
-
-        while(true){
-            Node cur = q.delMin();
-            if(cur.board.isGoal()){
-                if(cur.isTwin == true){
-                    isSolvable = false;
-                }else{
-                    isSolvable = true;
-                }
-                lastNode = cur;
-                moves = cur.moves;
-                break;
-            }
-            addNeighboursToQueue(cur, q);
         }
     }
 
