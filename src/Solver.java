@@ -162,7 +162,7 @@ public class Solver {
     public Iterable<Board> solution(){
         if(!isSolvable) return null;
         LinkedList<Board> ret = new LinkedList<>();
-        while(lastNode.preNode != null){
+        while(lastNode != null){
             ret.addFirst(lastNode.board);
             lastNode = lastNode.preNode;
         }
