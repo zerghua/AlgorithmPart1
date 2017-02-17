@@ -64,9 +64,6 @@ public class Solver {
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial){
         Board twin = initial.twin();
-        System.out.println("twin is:\n"+twin);
-
-
         boolean isRunningInitial = true;
 
         Node a = new Node(initial, null, 0);
