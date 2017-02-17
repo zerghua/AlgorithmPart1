@@ -53,7 +53,7 @@ public class Solver {
 
     private void addNeighboursToQueue(Node cur, MinPQ<Node> q, int m){
         for(Board neighbour: cur.board.neighbors()){
-            if(cur.preNode != null && cur.preNode.board == neighbour ) continue;
+            if(cur.preNode != null && cur.preNode.board.equals(neighbour) ) continue;
 
             Node newNode = new Node(neighbour, cur, m);
             q.insert(newNode);
