@@ -198,7 +198,7 @@ public class Board {
                     count++;
                 }else if(count == 1){
                     swap(ret.tiles, i, j, idx_i, idx_j);
-                    break;
+                    return ret;
                 }
             }
         }
