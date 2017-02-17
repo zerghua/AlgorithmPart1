@@ -162,9 +162,10 @@ public class Solver {
     public Iterable<Board> solution(){
         if(!isSolvable) return null;
         LinkedList<Board> ret = new LinkedList<>();
-        while(lastNode != null){
-            ret.addFirst(lastNode.board);
-            lastNode = lastNode.preNode;
+        Node p = lastNode;  // to make this function immutable
+        while(p != null){
+            ret.addFirst(p.board);
+            p = p.preNode;
         }
         return ret;
     }
@@ -182,7 +183,18 @@ public class Solver {
 
         // solve the puzzle
         Solver solver = new Solver(initial);
+        System.out.println(solver.moves());
+        System.out.println(solver.moves());
+        for (Board board : solver.solution())
+            StdOut.println(board);
+        System.out.println(solver.isSolvable());
+        System.out.println(solver.moves());
+        System.out.println(solver.isSolvable());
 
+        for (Board board : solver.solution())
+            StdOut.println(board);
+
+        /*
         // print solution to standard output
         if (!solver.isSolvable())
             StdOut.println("No solution possible");
@@ -191,6 +203,8 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
+
+        */
     }
 
 }
