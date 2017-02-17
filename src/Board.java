@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.In;
+
 import java.util.Stack;
 
 /**
@@ -149,10 +151,15 @@ import java.util.Stack;
 
  puzzle47.txt needs speed up to solve.
  puzzle49.txt removed goal[][] array solved it.
- puzzle4x4-49.txt is not solved in time.
+ puzzle4x4-49.txt is solved in 3 mins with 2-5 optimization.
+ puzzle50.txt not solved in 5 mins. with 1-5 optimization.
 
 
  */
+
+
+// this is 2d int array
+/*
 public class Board {
     private int[][] tiles;
     private int n;
@@ -299,9 +306,171 @@ public class Board {
 
     // unit tests (not graded)
     public static void main(String[] args){
+    }
+}
+*/
 
 
+    // 1d int array
+public class Board {
+    private int[] tiles;
+    private int n;
+    private int manhattan;
+
+    // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
+    public Board(int[][] blocks){
+        if (blocks == null) throw new java.lang.NullPointerException("null input is not allowed");
+        if (blocks[0].length != blocks.length) throw new IllegalArgumentException("input is not n by n");
+        n = blocks.length;
+        tiles = new int[n*n];
+        manhattan = -1;
+
+        // initialize goal board and copy to tiles
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++) {
+                tiles[to1dIndex(i,j)] = blocks[i][j];
+            }
+        }
     }
 
+    private Board(int[] blocks, int n){
+        this.n = n;
+        this.tiles = blocks.clone();
+        manhattan = -1;
+    }
 
+    // board dimension n
+    public int dimension(){
+        return n;
+    }
+
+    // number of blocks out of place
+    public int hamming(){
+        int ret = 0;
+        for(int i=0;i<n*n-1;i++) {
+            if(tiles[i] != i+1) ret++;
+        }
+        return ret;
+    }
+
+    // sum of Manhattan distances between blocks and goal
+    public int manhattan(){
+        if(manhattan != -1) return manhattan; //cache it, significant speed up.
+        manhattan = 0;
+        for(int i=0;i<n*n;i++){
+            int val = tiles[i];
+            if(val == 0) continue;
+
+            // get it's 2d index
+            int x = i/n;
+            int y = i%n;
+
+            // calculate it's manhattan distance by sum up diff of x and y difference between now and supposed position.
+            manhattan += Math.abs(x - (val-1)/n) + Math.abs(y - (val-1)%n);
+        }
+        return manhattan;
+    }
+
+    // is this board the goal board?
+    public boolean isGoal(){
+        return manhattan() == 0;
+    }
+
+    private void swap(int[] m, int i, int new_i){
+        int tmp = m[i];
+        m[i] = m[new_i];
+        m[new_i] = tmp;
+    }
+
+    // a board that is obtained by exchanging any pair of blocks
+    public Board twin(){
+        Board ret = new Board(tiles, n);
+        int count = 0, idx_i=0;
+        for(int i=0;i<n*n;i++){
+            if(ret.tiles[i] == 0) continue;
+            if(count == 0){
+                idx_i = i;
+                count++;
+            }else if(count == 1){
+                swap(ret.tiles, i, idx_i);
+                return ret;
+            }
+        }
+        return ret;
+    }
+
+    // does this board equal y?
+    public boolean equals(Object y){
+        if(y == this) return true;
+        if(y == null) return false;
+        if(y.getClass() != this.getClass()) return false;
+        Board that = (Board) y;
+        for(int i=0; i<n*n; i++){
+            if(tiles[i] != that.tiles[i]) return false;
+        }
+        return true;
+    }
+
+    // all neighboring boards
+    public Iterable<Board> neighbors(){
+        // get blank index
+        int blank_i =0, blank_j = 0;
+        for(int i=0;i<n*n;i++){
+            if(tiles[i] == 0){
+                blank_i = i/n;
+                blank_j = i%n;
+                break;
+            }
+        }
+
+        // add 4 neighbours
+        int[][] dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        Stack<Board> ret = new Stack<>();
+        for(int i=0;i<dir.length;i++){
+            int neighbour_i = blank_i + dir[i][0];
+            int neighbour_j = blank_j + dir[i][1];
+            if(neighbour_i >=0 && neighbour_i <n && neighbour_j >=0 && neighbour_j < n){
+                // exploit neighbour's manhattan distance is either +1 or -1
+                // calculate the manhattan difference for that number between new and old position.
+                int val = tiles[to1dIndex(neighbour_i, neighbour_j)];
+                int old_manhattan = Math.abs(neighbour_i - (val-1)/n) + Math.abs(neighbour_j - (val-1)%n);
+                int new_manhattan = Math.abs(blank_i - (val-1)/n) + Math.abs(blank_j - (val-1)%n);
+                int diff = new_manhattan - old_manhattan;
+
+                Board b = new Board(tiles, n);
+                swap(b.tiles, to1dIndex(blank_i, blank_j), to1dIndex(neighbour_i, neighbour_j));
+                b.manhattan = this.manhattan() + diff;
+                ret.add(b);
+            }
+        }
+        return ret;
+    }
+
+    private int to1dIndex(int i, int j){
+        return i*n + j;
+    }
+
+    // string representation of this board (in the output format specified below)
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(n + "\n");
+        for (int i = 0; i < n*n; i++) {
+            s.append(String.format("%2d ", tiles[i]));
+            if(i != 0 && i%n == n-1) s.append("\n");
+        }
+        return s.toString();
+    }
+
+    // unit tests (not graded)
+    public static void main(String[] args){
+        In in = new In(args[0]);
+        int n = in.readInt();
+        int[][] blocks = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                blocks[i][j] = in.readInt();
+        Board initial = new Board(blocks);
+        System.out.println(initial.manhattan());
+
+    }
 }
