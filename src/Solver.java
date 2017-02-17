@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
  */
 public class Solver {
+    /*
     private class Node{
         Board board;
         Node preNode;
@@ -36,6 +37,22 @@ public class Solver {
             this.moves = moves;
         }
     }
+    */
+
+    // additional variable to differentiate from twins
+    private class Node{
+        Board board;
+        Node preNode;
+        int moves;
+        boolean isTwin;
+        Node(Board cur, Node pre, int moves, boolean isTwin){
+            this.board = cur;
+            this.preNode = pre;
+            this.moves = moves;
+            this.isTwin = isTwin;
+        }
+    }
+
 
     private boolean isSolvable =false;
     private int moves = -1;
@@ -59,12 +76,12 @@ public class Solver {
         for(Board neighbour: cur.board.neighbors()){
             if(cur.preNode != null && cur.preNode.board.equals(neighbour) ) continue;
 
-            Node newNode = new Node(neighbour, cur, cur.moves + 1);
+            Node newNode = new Node(neighbour, cur, cur.moves + 1, cur.isTwin);
             q.insert(newNode);
         }
     }
 
-
+/*
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial){
         Board twin = initial.twin();
@@ -99,6 +116,33 @@ public class Solver {
                 addNeighboursToQueue(cur, twin_q);
                 isRunningInitial = true;
             }
+        }
+    }
+*/
+
+    // find a solution to the initial board (using the A* algorithm)
+    // using only one queue
+    public Solver(Board initial){
+        Board twin = initial.twin();
+        Node a = new Node(initial, null, 0, false);
+        Node b = new Node(twin, null, 0, true);
+        MinPQ<Node> q = initQueue(initial);
+        q.insert(a);
+        q.insert(b);
+
+        while(true){
+            Node cur = q.delMin();
+            if(cur.board.isGoal()){
+                if(cur.isTwin == true){
+                    isSolvable = false;
+                }else{
+                    isSolvable = true;
+                }
+                lastNode = cur;
+                moves = cur.moves;
+                break;
+            }
+            addNeighboursToQueue(cur, q);
         }
     }
 
