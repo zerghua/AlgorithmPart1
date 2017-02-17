@@ -46,6 +46,10 @@ public class Solver {
         return new MinPQ<>(new Comparator<Node>() {
             @Override
             public int compare(Node o1, Node o2) {
+                // break tie by using manhattan
+                if(o1.board.manhattan() + o1.moves == o2.board.manhattan() + o2.moves){
+                    return o1.board.manhattan() - o2.board.manhattan();
+                }
                 return o1.board.manhattan() + o1.moves - o2.board.manhattan() - o2.moves;
             }
         });
