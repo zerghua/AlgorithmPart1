@@ -37,8 +37,8 @@ public class Solver {
         }
     }
 
-    private boolean isSolvable;
-    private int moves;
+    private boolean isSolvable =false;
+    private int moves = -1;
     private Node lastNode;
 
 
@@ -51,11 +51,11 @@ public class Solver {
         });
     }
 
-    private void addNeighboursToQueue(Node cur, MinPQ<Node> q, int m){
+    private void addNeighboursToQueue(Node cur, MinPQ<Node> q){
         for(Board neighbour: cur.board.neighbors()){
             if(cur.preNode != null && cur.preNode.board.equals(neighbour) ) continue;
 
-            Node newNode = new Node(neighbour, cur, m);
+            Node newNode = new Node(neighbour, cur, cur.moves + 1);
             q.insert(newNode);
         }
     }
@@ -63,10 +63,10 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial){
-        isSolvable = false;
-        moves = 0;
-        int twin_moves= 0;
         Board twin = initial.twin();
+        System.out.println("twin is:\n"+twin);
+
+
         boolean isRunningInitial = true;
 
         Node a = new Node(initial, null, 0);
@@ -83,10 +83,10 @@ public class Solver {
                 if(cur.board.isGoal()){
                     isSolvable = true;
                     lastNode = cur;
+                    moves = cur.moves;
                     break;
                 }
-                moves++;
-                addNeighboursToQueue(cur, q, moves);
+                addNeighboursToQueue(cur, q);
                 isRunningInitial = false;
             }
             else{
@@ -95,8 +95,7 @@ public class Solver {
                     isSolvable = false;
                     break;
                 }
-                twin_moves++;
-                addNeighboursToQueue(cur, twin_q, twin_moves);
+                addNeighboursToQueue(cur, twin_q);
                 isRunningInitial = true;
             }
         }
@@ -118,7 +117,7 @@ public class Solver {
     public Iterable<Board> solution(){
         if(!isSolvable) return null;
         LinkedList<Board> ret = new LinkedList<>();
-        while(lastNode.preNode.board != null){
+        while(lastNode.preNode != null){
             ret.addFirst(lastNode.board);
             lastNode = lastNode.preNode;
         }
