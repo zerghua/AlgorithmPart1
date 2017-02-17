@@ -159,7 +159,6 @@ import java.util.Stack;
 
 
 // this is 2d int array
-/*
 public class Board {
     private int[][] tiles;
     private int n;
@@ -248,6 +247,7 @@ public class Board {
         if(y == null) return false;
         if(y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
+        if(that.n != this.n) return false;
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++) if(tiles[i][j] != that.tiles[i][j]) return false;
         }
@@ -308,9 +308,9 @@ public class Board {
     public static void main(String[] args){
     }
 }
-*/
 
 
+/*
     // 1d int array
 public class Board {
     private int[] tiles;
@@ -405,6 +405,7 @@ public class Board {
         if(y == null) return false;
         if(y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
+        if(that.n != this.n) return false;
         for(int i=0; i<n*n; i++){
             if(tiles[i] != that.tiles[i]) return false;
         }
@@ -474,3 +475,4 @@ public class Board {
 
     }
 }
+*/
