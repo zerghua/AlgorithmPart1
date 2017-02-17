@@ -121,10 +121,39 @@ import java.util.Stack;
  Performance requirements.
  Your implementation should support all Board methods in time proportional to n2 (or better) in the worst case.
 
+
+ How can I reduce the amount of memory a Board uses?
+ For starters, recall that an n-by-n int[][] array in Java uses about 24 + 32n + 4n^2 bytes; when n equals 3,
+ this is 156 bytes. To save memory, consider using an n-by-n char[][] array or a length n^2 char[] array.
+ You could use a more elaborate representation: since each board is a permutation of length n^2, in principle,
+ you need only about lg ((n^2)!) bits to represent it; when n equals 3, this is only 19 bits.
+
+
+
+ Any ways to speed up the algorithm? Yes there are many opportunities for optimization here.
+ 1. Use a 1d array instead of a 2d array (as suggested above).
+
+ 2. Cache either the Manhattan distance of a board (or Manhattan priority of a search node). It is waste to
+ recompute the same quantity over and over again.
+
+ 3. Exploit the fact that the difference in Manhattan distance between a board and a neighbor is either −1 or +1.
+
+ 4. Use only one PQ to run the A* algorithm on the initial board and its twin.
+
+ 5. When two search nodes have the same Manhattan priority, you can break ties however you want, e.g., by comparing
+ either the Hamming or Manhattan distances of the two boards.
+
+ Use a parity argument to determine whether a puzzle is unsolvable (instead of two synchronous A* searches).
+ However, this will either break the API or will require a fragile dependence on the toString() method, so don't do it.
+
+
+ puzzle47.txt and puzzle49.txt needs speed up to solve.
+
  */
 public class Board {
     private int[][] tiles, goal;
     private int n;
+    private int manhattan=-1;
 
     // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks){
@@ -163,6 +192,7 @@ public class Board {
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan(){
+        if(manhattan != -1) return manhattan; //cache it, significant speed up.
         int ret = 0;
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
@@ -171,7 +201,8 @@ public class Board {
                 ret += Math.abs(i - (val-1)/n) + Math.abs(j - (val-1)%n);
             }
         }
-        return ret;
+        manhattan = ret;
+        return manhattan;
     }
 
     // is this board the goal board?
