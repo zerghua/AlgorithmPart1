@@ -1,8 +1,9 @@
+package Assignment4_8puzzle;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 
 
@@ -140,7 +141,7 @@ public class Solver {
             StdOut.println("No solution possible");
         else {
             StdOut.println("Minimum number of moves = " + solver.moves());
-            for (Board board : solver.solution())
+            for (Assignment4_8puzzle.Board board : solver.solution())
                 StdOut.println(board);
         }
 

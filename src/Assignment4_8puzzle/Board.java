@@ -1,3 +1,5 @@
+package Assignment4_8puzzle;
+
 import edu.princeton.cs.algs4.In;
 
 import java.util.Stack;
@@ -121,10 +123,10 @@ import java.util.Stack;
 
 
  Performance requirements.
- Your implementation should support all Board methods in time proportional to n2 (or better) in the worst case.
+ Your implementation should support all Assignment4_8puzzle.Board methods in time proportional to n2 (or better) in the worst case.
 
 
- How can I reduce the amount of memory a Board uses?
+ How can I reduce the amount of memory a Assignment4_8puzzle.Board uses?
  For starters, recall that an n-by-n int[][] array in Java uses about 24 + 32n + 4n^2 bytes; when n equals 3,
  this is 156 bytes. To save memory, consider using an n-by-n char[][] array or a length n^2 char[] array.
  You could use a more elaborate representation: since each board is a permutation of length n^2, in principle,
@@ -174,13 +176,13 @@ import java.util.Stack;
 
 /*
 // this is 2d int array
-public class Board {
+public class Assignment4_8puzzle.Board {
     private int[][] tiles;
     private int n;
     private int manhattan=-1;
 
     // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
-    public Board(int[][] blocks){
+    public Assignment4_8puzzle.Board(int[][] blocks){
         if (blocks == null) throw new java.lang.NullPointerException("null input is not allowed");
         if (blocks[0].length != blocks.length) throw new IllegalArgumentException("input is not n by n");
         n = blocks.length;
@@ -237,8 +239,8 @@ public class Board {
     }
 
     // a board that is obtained by exchanging any pair of blocks
-    public Board twin(){
-        Board ret = new Board(tiles);
+    public Assignment4_8puzzle.Board twin(){
+        Assignment4_8puzzle.Board ret = new Assignment4_8puzzle.Board(tiles);
         int count = 0, idx_i=0, idx_j=0;
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
@@ -261,7 +263,7 @@ public class Board {
         if(y == this) return true;
         if(y == null) return false;
         if(y.getClass() != this.getClass()) return false;
-        Board that = (Board) y;
+        Assignment4_8puzzle.Board that = (Assignment4_8puzzle.Board) y;
         if(that.dimension() != this.dimension()) return false;
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++) if(tiles[i][j] != that.tiles[i][j]) return false;
@@ -270,7 +272,7 @@ public class Board {
     }
 
     // all neighboring boards
-    public Iterable<Board> neighbors(){
+    public Iterable<Assignment4_8puzzle.Board> neighbors(){
         // get blank index
         int blank_i =0, blank_j = 0;
         for(int i=0;i<n;i++){
@@ -285,7 +287,7 @@ public class Board {
 
         // add 4 neighbours
         int[][] dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        Stack<Board> ret = new Stack<>();
+        Stack<Assignment4_8puzzle.Board> ret = new Stack<>();
         for(int i=0;i<dir.length;i++){
             int neighbour_i = blank_i + dir[i][0];
             int neighbour_j = blank_j + dir[i][1];
@@ -297,7 +299,7 @@ public class Board {
                 int new_manhattan = Math.abs(blank_i - (val-1)/n) + Math.abs(blank_j - (val-1)%n);
                 int diff = new_manhattan - old_manhattan;
 
-                Board b = new Board(tiles);
+                Assignment4_8puzzle.Board b = new Assignment4_8puzzle.Board(tiles);
                 swap(b.tiles, blank_i, blank_j, neighbour_i, neighbour_j);
                 b.manhattan = this.manhattan() + diff;
                 ret.add(b);
