@@ -85,14 +85,33 @@
  Repeat this question but with the brute-force implementation.
 
 
+
+ These are many ways to improve performance of your 2d-tree. Here are some ideas.
+ Squared distances.
+ Whenever you need to compare two Euclidean distances, it is often more efficient to compare the squares of the
+ two distances to avoid the expensive operation of taking square roots.
+ Everyone should implement this optimization because it is both easy to do and likely a bottleneck.
+
+
+ Range search.
+ Instead of checking whether the query rectangle intersects the rectangle corresponding to a node,
+ it suffices to check only whether the query rectangle intersects the splitting line segment:
+ if it does, then recursively search both subtrees;
+ otherwise, recursively search the one subtree where points intersecting the query rectangle could be.
+
+
+
+ Save memory.
+ You are not required to explicitly store a RectHV in each 2d-tree node (though it is probably wise in your first version).
+
  */
 
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
-
 import java.util.LinkedList;
+
 public class KdTree {
     private Node root;
     private int size;
@@ -199,10 +218,8 @@ public class KdTree {
     // use StdDraw.setPenColor(StdDraw.RED) or StdDraw.setPenColor(StdDraw.BLUE) and StdDraw.setPenRadius()
     // before drawing the splitting lines.
     public void draw(){
-        // StdDraw.line(xmin, ymin, xmax, ymin);
         StdDraw.clear();
         draw(root, true);
-
     }
 
     public void draw(Node cur, boolean isVertical){
@@ -238,13 +255,44 @@ public class KdTree {
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect){
-        return null;
+        LinkedList<Point2D> ret = new LinkedList<>();
+        range(rect, ret, root);
+        return ret;
     }
+
+    private void range(RectHV rect, LinkedList<Point2D> ret, Node cur){
+        if(cur == null) return;
+        if(rect.contains(cur.p)) ret.add(cur.p);
+        if(rect.intersects(cur.lb.rect)) range(rect, ret, cur.lb);
+        if(rect.intersects(cur.rt.rect)) range(rect, ret, cur.rt);
+    }
+
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p){
-        return null;
+        if (p == null) throw new java.lang.NullPointerException("point should not be null");
+        if (isEmpty()) return null;
+
+        return nearest(p, root, root.p, Double.POSITIVE_INFINITY);
     }
+
+    private Point2D nearest(Point2D p, Node cur, Point2D candidate, double max_dist){
+        if(cur == null) return candidate;
+
+        double dist = p.distanceSquaredTo(cur.p);
+        if(dist < max_dist) {
+            max_dist = dist;
+            candidate = cur.p;
+        }
+
+        Point2D ret = nearest(p, cur.lb, candidate, max_dist);
+        if( ret.equals(candidate) )
+            return nearest(p, cur.rt, candidate, max_dist);
+
+        return ret;
+    }
+
+
 
     // unit testing of the methods (optional)
     public static void main(String[] args){
