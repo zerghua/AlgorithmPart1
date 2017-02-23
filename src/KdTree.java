@@ -279,20 +279,25 @@ public class KdTree {
         return nearest(p, root, root.p, Double.POSITIVE_INFINITY);
     }
 
-    private Point2D nearest(Point2D p, Node cur, Point2D candidate, double max_dist){
-        if(cur == null) return candidate;
+    private Point2D nearest(Point2D p, Node cur, Point2D candidate, double min_dist){
+        if(cur != null && cur.rect.distanceSquaredTo(p) < min_dist) {
 
-        double dist = p.distanceSquaredTo(cur.p);
-        if(dist < max_dist) {
-            max_dist = dist;
-            candidate = cur.p;
+            double dist = p.distanceSquaredTo(cur.p);
+            if (dist < min_dist) {
+                min_dist = dist;
+                candidate = cur.p;
+            }
+
+            if(cur.lb != null && cur.lb.rect.contains(p)){
+                candidate = nearest(p, cur.lb, candidate, min_dist);
+                candidate = nearest(p, cur.rt, candidate, candidate.distanceSquaredTo(p));
+            }else if(cur.rt != null){
+                candidate = nearest(p, cur.rt, candidate, min_dist);
+                candidate = nearest(p, cur.lb, candidate, candidate.distanceSquaredTo(p));
+            }
         }
 
-        Point2D ret = nearest(p, cur.lb, candidate, max_dist);
-        if( ret.equals(candidate) )
-            return nearest(p, cur.rt, candidate, max_dist);
-
-        return ret;
+        return candidate;
     }
 
 
