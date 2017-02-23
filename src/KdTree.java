@@ -104,11 +104,12 @@ public class KdTree {
         public Node rt;        // the right/top subtree
         public boolean isVertical;
 
-        public Node(Point2D p, RectHV rect){
+        public Node(Point2D p, RectHV rect, boolean isVertical){
             this.p = p;
             this.rect = rect;
             this.lb = null;
             this.rt = null;
+            this.isVertical = isVertical;
         }
     }
 
@@ -131,14 +132,14 @@ public class KdTree {
     public void insert(Point2D p){
         if ( p == null ) throw new java.lang.NullPointerException("point should not be null");
         if( root == null) {
-            root = new Node(p, new RectHV(0,0,1,1));
+            root = new Node(p, new RectHV(0,0,1,1), true);
             size++;
         }else{
-            insert(root, root, p, true);
+            insert(root, root, p);
         }
     }
 
-    private Node insert(Node cur, Node parent, Point2D p, boolean isVertical){ // parent is used to calculate rectHV
+    private Node insert(Node cur, Node parent, Point2D p){ // parent is used to calculate rectHV
         if(cur == null) {
             size++;
             double xmin = parent.rect.xmin();
@@ -146,7 +147,7 @@ public class KdTree {
             double xmax = parent.rect.xmax();
             double ymax = parent.rect.ymax();
 
-            if(isVertical){
+            if(parent.isVertical){
                 if(p.x() < parent.p.x()) xmax = parent.p.x();
                 else xmin = parent.p.x();
             }else{
@@ -154,17 +155,20 @@ public class KdTree {
                 else ymin = parent.p.y();
             }
 
-            return new Node(p, new RectHV(xmin, ymin, xmax, ymax));
+            RectHV rect = new RectHV(xmin, ymin, xmax, ymax);
+            //System.out.println("rect = " + rect);
+
+            return new Node(p, rect, !parent.isVertical);
         }
 
         if(p.equals(cur.p)) return cur; // discard repeat point
 
         if(cur.isVertical){ // compare x when vertical
-            if(p.x() < cur.p.x()) cur.lb = insert(cur.lb, cur, p, !isVertical);
-            else cur.rt = insert(cur.rt, cur, p, !isVertical);
+            if(p.x() < cur.p.x()) cur.lb = insert(cur.lb, cur, p);
+            else cur.rt = insert(cur.rt, cur, p);
         }else{  // compare y when horizontal
-            if(p.y() < cur.p.y()) cur.lb = insert(cur.lb, cur, p, !isVertical);
-            else cur.rt = insert(cur.rt, cur, p, !isVertical);
+            if(p.y() < cur.p.y()) cur.lb = insert(cur.lb, cur, p);
+            else cur.rt = insert(cur.rt, cur, p);
         }
         return cur;
     }
@@ -172,19 +176,19 @@ public class KdTree {
     // does the set contain point p?
     public boolean contains(Point2D p){
         if ( p == null ) throw new java.lang.NullPointerException("point should not be null");
-        return contains(p, root, true);
+        return contains(p, root);
     }
 
-    private boolean contains(Point2D p, Node cur, boolean isVertical){
+    private boolean contains(Point2D p, Node cur){
         if(cur == null) return false;
         if(p.equals(cur.p)) return true;
 
-        if(isVertical){
-            if(p.x() < cur.p.x()) return contains(p, cur.lb, !isVertical);
-            else return contains(p, cur.rt, !isVertical);
+        if(cur.isVertical){
+            if(p.x() < cur.p.x()) return contains(p, cur.lb);
+            else return contains(p, cur.rt);
         }else{
-            if(p.y() < cur.p.y()) return contains(p, cur.lb, !isVertical);
-            else return contains(p, cur.rt, !isVertical);
+            if(p.y() < cur.p.y()) return contains(p, cur.lb);
+            else return contains(p, cur.rt);
         }
     }
 
@@ -196,9 +200,39 @@ public class KdTree {
     // before drawing the splitting lines.
     public void draw(){
         // StdDraw.line(xmin, ymin, xmax, ymin);
-        // StdDraw.setPenColor(StdDraw.BLACK);
-        // StdDraw.setPenRadius(0.01);
+        StdDraw.clear();
+        draw(root, true);
 
+    }
+
+    public void draw(Node cur, boolean isVertical){
+        if(cur == null) return;
+
+        StdDraw.setPenRadius(0.01);
+
+        // draw line
+        double xmin = cur.rect.xmin();
+        double ymin = cur.rect.ymin();
+        double xmax = cur.rect.xmax();
+        double ymax = cur.rect.ymax();
+        if(isVertical){
+            StdDraw.setPenColor(StdDraw.RED);
+            xmin = xmax = cur.p.x();
+            StdDraw.line(xmin, ymin, xmax, ymax);
+        }else{
+            StdDraw.setPenColor(StdDraw.BLUE);
+            ymin = ymax = cur.p.y();
+            StdDraw.line(xmin, ymin, xmax, ymax);
+        }
+        //System.out.format("line [%f %f], [%f %f]\n\n", xmin, ymin, xmax, ymax);
+
+        // draw point
+        StdDraw.setPenColor(StdDraw.BLACK);
+        cur.p.draw();
+
+        // recursively draw
+        draw(cur.lb, !isVertical);
+        draw(cur.rt, !isVertical);
     }
 
 
