@@ -107,6 +107,7 @@
  */
 
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
@@ -135,6 +136,7 @@ public class KdTree {
     // construct an empty set of points
     public KdTree(){
         size = 0;
+        root = null;
     }
 
     // is the set empty?
@@ -255,6 +257,7 @@ public class KdTree {
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect){
+        if (rect == null) throw new java.lang.NullPointerException("rect should not be null");
         LinkedList<Point2D> ret = new LinkedList<>();
         range(rect, ret, root);
         return ret;
@@ -263,8 +266,8 @@ public class KdTree {
     private void range(RectHV rect, LinkedList<Point2D> ret, Node cur){
         if(cur == null) return;
         if(rect.contains(cur.p)) ret.add(cur.p);
-        if(rect.intersects(cur.lb.rect)) range(rect, ret, cur.lb);
-        if(rect.intersects(cur.rt.rect)) range(rect, ret, cur.rt);
+        if(cur.lb != null && rect.intersects(cur.lb.rect)) range(rect, ret, cur.lb);
+        if(cur.rt != null && rect.intersects(cur.rt.rect)) range(rect, ret, cur.rt);
     }
 
 
@@ -296,6 +299,25 @@ public class KdTree {
 
     // unit testing of the methods (optional)
     public static void main(String[] args){
+        String filename = args[0];
+        In in = new In(filename);
+
+        StdDraw.enableDoubleBuffering();
+
+        // initialize the two data structures with point from standard input
+        KdTree kdtree = new KdTree();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            kdtree.insert(p);
+        }
+        System.out.println("size="+kdtree.size());
+
+        StdDraw.clear();
+        StdDraw.setPenRadius(0.01);
+        kdtree.draw();
+        StdDraw.show();
 
     }
 }
