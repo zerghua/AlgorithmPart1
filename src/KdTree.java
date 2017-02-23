@@ -224,7 +224,7 @@ public class KdTree {
         draw(root, true);
     }
 
-    public void draw(Node cur, boolean isVertical){
+    private void draw(Node cur, boolean isVertical){
         if(cur == null) return;
 
         StdDraw.setPenRadius(0.01);
