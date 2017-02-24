@@ -104,6 +104,18 @@
  Save memory.
  You are not required to explicitly store a RectHV in each 2d-tree node (though it is probably wise in your first version).
 
+
+ ASSESSMENT SUMMARY
+ Compilation: PASSED
+ API: PASSED
+ Findbugs: PASSED
+ Checkstyle: FAILED (110 warnings)
+ Correctness: 27/27 tests passed
+ Memory: 8/8 tests passed
+ Timing: 42/42 tests passed
+
+ Aggregate score: 100.00% [Compilation: 5%, API: 5%, Findbugs: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
+
  */
 
 
@@ -291,7 +303,7 @@ public class KdTree {
             if(cur.lb != null && cur.lb.rect.contains(p)){
                 candidate = nearest(p, cur.lb, candidate, min_dist);
                 candidate = nearest(p, cur.rt, candidate, candidate.distanceSquaredTo(p));
-            }else if(cur.rt != null){
+            }else{
                 candidate = nearest(p, cur.rt, candidate, min_dist);
                 candidate = nearest(p, cur.lb, candidate, candidate.distanceSquaredTo(p));
             }
