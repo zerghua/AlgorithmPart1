@@ -1,9 +1,9 @@
-/**
+package Assignment5_KdTrees; /**
  * Created by Hua on 2/22/2017.
  * <p/>
  * <p/>
  * 2d-tree implementation.
- * Write a mutable data type KdTree.java that uses a 2d-tree to implement the same API (but replace PointSET with KdTree).
+ * Write a mutable data type Assignment5_KdTrees.KdTree.java that uses a 2d-tree to implement the same API (but replace Assignment5_KdTrees.PointSET with Assignment5_KdTrees.KdTree).
  * A 2d-tree is a generalization of a BST to two-dimensional keys.
  * The idea is to build a BST with points in the nodes, using the x- and y-coordinates of the points as keys
  * in strictly alternating sequence.
@@ -55,16 +55,16 @@
  * Clients.
  * You may use the following interactive client programs to test and debug your code.
  * <p/>
- * KdTreeVisualizer.java
+ * Assignment5_KdTrees.KdTreeVisualizer.java
  * computes and draws the 2d-tree that results from the sequence of points clicked by the user in the standard drawing window.
  * <p/>
  * <p/>
- * RangeSearchVisualizer.java
+ * Assignment5_KdTrees.RangeSearchVisualizer.java
  * reads a sequence of points from a file (specified as a command-line argument) and inserts those points into a 2d-tree.
  * Then, it performs range searches on the axis-aligned rectangles dragged by the user in the standard drawing window.
  * <p/>
  * <p/>
- * NearestNeighborVisualizer.java
+ * Assignment5_KdTrees.NearestNeighborVisualizer.java
  * reads a sequence of points from a file (specified as a command-line argument) and inserts those points into a 2d-tree.
  * Then, it performs nearest neighbor queries on the point corresponding to the location of the mouse in the standard
  * drawing window.

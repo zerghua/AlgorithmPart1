@@ -1,7 +1,7 @@
-/******************************************************************************
- *  Compilation:  javac NearestNeighborVisualizer.java
- *  Execution:    java NearestNeighborVisualizer input.txt
- *  Dependencies: PointSET.java KdTree.java
+package Assignment5_KdTrees; /******************************************************************************
+ *  Compilation:  javac Assignment5_KdTrees.NearestNeighborVisualizer.java
+ *  Execution:    java Assignment5_KdTrees.NearestNeighborVisualizer input.txt
+ *  Dependencies: Assignment5_KdTrees.PointSET.java Assignment5_KdTrees.KdTree.java
  *
  *  Read points from a file (specified as a command-line argument) and
  *  draw to standard draw. Highlight the closest point to the mouse.

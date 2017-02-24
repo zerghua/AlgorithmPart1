@@ -1,9 +1,9 @@
-/**
+package Assignment5_KdTrees; /**
  * Created by Hua on 2/22/2017.
  * <p/>
  * <p/>
  * Brute-force implementation.
- * Write a mutable data type PointSET.java that represents a set of points in the unit square.
+ * Write a mutable data type Assignment5_KdTrees.PointSET.java that represents a set of points in the unit square.
  * Implement the following API by using a red-black BST (using either SET from algs4.jar or java.util.TreeSet).
  * <p/>
  * <p/>

@@ -1,7 +1,7 @@
-/******************************************************************************
- *  Compilation:  javac KdTreeVisualizer.java
- *  Execution:    java KdTreeVisualizer
- *  Dependencies: KdTree.java
+package Assignment5_KdTrees; /******************************************************************************
+ *  Compilation:  javac Assignment5_KdTrees.KdTreeVisualizer.java
+ *  Execution:    java Assignment5_KdTrees.KdTreeVisualizer
+ *  Dependencies: Assignment5_KdTrees.KdTree.java
  *
  *  Add the points that the user clicks in the standard draw window
  *  to a kd-tree and draw the resulting kd-tree.
